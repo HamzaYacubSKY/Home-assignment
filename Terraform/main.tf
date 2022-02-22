@@ -96,7 +96,7 @@ resource "aws_instance" "ansible-worker" {
   vpc_security_group_ids      = [aws_security_group.sg01.id]
   associate_public_ip_address = true
   monitoring                  = true
-  count                       = 2
+  count                       = 0
 
   tags = {
     Name = "Ansible - Worker ${count.index + 1}"
