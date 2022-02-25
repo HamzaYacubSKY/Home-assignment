@@ -62,6 +62,14 @@ resource "aws_security_group" "sg01" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "custom port from VPC"
+    from_port   = "8080"
+    to_port     = "8080"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     protocol    = "-1"
@@ -71,24 +79,24 @@ resource "aws_security_group" "sg01" {
 }
 ################################################
 
-##################### EC2 ######################
-resource "aws_instance" "ansible-master" {
-  ami                         = "ami-0015a39e4b7c0966f"
-  instance_type               = "t2.micro"
-  key_name                    = var.key_pair
-  subnet_id                   = aws_subnet.subnet01.id
-  vpc_security_group_ids      = [aws_security_group.sg01.id]
-  associate_public_ip_address = true
-  monitoring                  = true
-  user_data                   = file("scripts/startup.sh")
-  count                       = 1
+# ##################### EC2 ######################
+# resource "aws_instance" "ansible-master" {
+#   ami                         = "ami-0015a39e4b7c0966f"
+#   instance_type               = "t2.micro"
+#   key_name                    = var.key_pair
+#   subnet_id                   = aws_subnet.subnet01.id
+#   vpc_security_group_ids      = [aws_security_group.sg01.id]
+#   associate_public_ip_address = true
+#   monitoring                  = true
+#   user_data                   = file("scripts/startup.sh")
+#   count                       = 1
 
-  tags = {
-    Name = "Ansible - Master"
-  }
-}
+#   tags = {
+#     Name = "Ansible - Master"
+#   }
+# }
 
-resource "aws_instance" "ansible-worker" {
+resource "aws_instance" "node01" {
   ami                         = "ami-0015a39e4b7c0966f"
   instance_type               = "t2.micro"
   key_name                    = var.key_pair
@@ -99,7 +107,7 @@ resource "aws_instance" "ansible-worker" {
   count                       = 2
 
   tags = {
-    Name = "Ansible - Worker ${count.index + 1}"
+    Name = "Worker node -  ${count.index + 1}"
   }
 }
 #################################################
