@@ -1,11 +1,3 @@
-variable "access_key" {
-  description = "access key for aws credentials"
-}
-
-variable "secret_key" {
-  description = "secret key for aws credentials"
-}
-
 variable "cidr" {
   description = "CIDR block for vpc"
 }
