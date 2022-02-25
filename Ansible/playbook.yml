@@ -1,0 +1,11 @@
+- name: install docker on worker 1
+  hosts: ansible_worker_1
+  become: true
+  roles:
+  - install_docker
+
+- name: install docker on worker 2
+  hosts: ansible_worker_2
+  become: true
+  roles:
+  - install_docker
