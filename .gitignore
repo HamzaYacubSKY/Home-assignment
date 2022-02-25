@@ -3,4 +3,4 @@
 *.tfvars
 *.tfstate*
 *.terraform*
-
+.DS_Store
