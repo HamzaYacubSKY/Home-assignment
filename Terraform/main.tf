@@ -80,7 +80,7 @@ resource "aws_instance" "ansible-master" {
   vpc_security_group_ids      = [aws_security_group.sg01.id]
   associate_public_ip_address = true
   monitoring                  = true
-  user_data                   = file("scripts/install_ansible.sh")
+  user_data                   = file("scripts/startup.sh")
   count                       = 1
 
   tags = {
@@ -96,7 +96,7 @@ resource "aws_instance" "ansible-worker" {
   vpc_security_group_ids      = [aws_security_group.sg01.id]
   associate_public_ip_address = true
   monitoring                  = true
-  count                       = 0
+  count                       = 2
 
   tags = {
     Name = "Ansible - Worker ${count.index + 1}"
