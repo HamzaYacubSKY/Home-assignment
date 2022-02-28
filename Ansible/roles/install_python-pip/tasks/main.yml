@@ -8,3 +8,7 @@
   args:
     executable: /bin/bash
 
+- name: pip3 install docker
+  raw: 'pip3 install docker'
+  args:
+    executable: /bin/bash
