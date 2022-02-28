@@ -1,0 +1,10 @@
+- name: update apt modules
+  raw: 'apt-get update'
+  args:
+    executable: /bin/bash
+
+- name: install python3 pip modules
+  raw: 'apt install python3-pip -y'
+  args:
+    executable: /bin/bash
+
