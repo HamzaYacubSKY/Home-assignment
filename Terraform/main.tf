@@ -91,22 +91,6 @@ resource "aws_security_group" "sg01" {
 ################################################
 
 # ##################### EC2 ######################
-# resource "aws_instance" "ansible-master" {
-#   ami                         = "ami-0015a39e4b7c0966f"
-#   instance_type               = "t2.micro"
-#   key_name                    = var.key_pair
-#   subnet_id                   = aws_subnet.subnet01.id
-#   vpc_security_group_ids      = [aws_security_group.sg01.id]
-#   associate_public_ip_address = true
-#   monitoring                  = true
-#   user_data                   = file("scripts/startup.sh")
-#   count                       = 1
-
-#   tags = {
-#     Name = "Ansible - Master"
-#   }
-# }
-
 resource "aws_instance" "node01" {
   ami                         = "ami-0015a39e4b7c0966f"
   instance_type               = "t2.micro"
@@ -179,13 +163,13 @@ resource "aws_lb_target_group" "tg01" {
 resource "aws_lb_target_group_attachment" "tga01" {
   target_group_arn = aws_lb_target_group.tg01.arn
   target_id        = aws_instance.node01.id
-  port             = 80
+  port             = 8080
 }
 
 resource "aws_lb_target_group_attachment" "tga02" {
   target_group_arn = aws_lb_target_group.tg01.arn
   target_id        = aws_instance.node02.id
-  port             = 80
+  port             = 8080
 }
 
 resource "aws_lb" "lb01" {
