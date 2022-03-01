@@ -166,3 +166,47 @@ resource "aws_route_table_association" "rta2" {
   subnet_id      = aws_subnet.subnet02.id
 }
 ###############################################
+
+############### LOAD BALANCER #################
+
+resource "aws_lb_target_group" "tg01" {
+  name     = "tg01"
+  port     = 8080
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.vpc01.id
+}
+
+resource "aws_lb_target_group_attachment" "tga01" {
+  target_group_arn = aws_lb_target_group.tg01.arn
+  target_id        = aws_instance.node01.id
+  port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "tga02" {
+  target_group_arn = aws_lb_target_group.tg01.arn
+  target_id        = aws_instance.node02.id
+  port             = 80
+}
+
+resource "aws_lb" "lb01" {
+  name               = "alb01"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.sg01.id]
+  subnets            = [aws_subnet.subnet01.id, aws_subnet.subnet02.id]
+
+  enable_deletion_protection = false
+}
+
+resource "aws_lb_listener" "alb_listener" {
+  load_balancer_arn = aws_lb.lb01.arn
+  port              = "80"
+  protocol          = "HTTP"
+  #ssl_policy        = "ELBSecurityPolicy-2016-08"
+  #certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg01.arn
+  }
+}
