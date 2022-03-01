@@ -24,11 +24,22 @@ resource "aws_vpc" "vpc01" {
 }
 
 resource "aws_subnet" "subnet01" {
-  cidr_block = var.subnet_cidr
+  availability_zone = "eu-west-2a"
+  cidr_block = var.subnet01_cidr
   vpc_id     = aws_vpc.vpc01.id
 
   tags = {
     Name = "subnet01"
+  }
+}
+
+resource "aws_subnet" "subnet02" {
+  availability_zone = "eu-west-2b"
+  cidr_block = var.subnet02_cidr
+  vpc_id     = aws_vpc.vpc01.id
+
+  tags = {
+    Name = "subnet02"
   }
 }
 #################################################
@@ -104,10 +115,23 @@ resource "aws_instance" "node01" {
   vpc_security_group_ids      = [aws_security_group.sg01.id]
   associate_public_ip_address = true
   monitoring                  = true
-  count                       = 2
 
   tags = {
-    Name = "Worker node -  ${count.index + 1}"
+    Name = "Worker node - 1"
+  }
+}
+
+resource "aws_instance" "node02" {
+  ami                         = "ami-0015a39e4b7c0966f"
+  instance_type               = "t2.micro"
+  key_name                    = var.key_pair
+  subnet_id                   = aws_subnet.subnet02.id
+  vpc_security_group_ids      = [aws_security_group.sg01.id]
+  associate_public_ip_address = true
+  monitoring                  = true
+
+  tags = {
+    Name = "Worker node - 2"
   }
 }
 #################################################
@@ -132,8 +156,13 @@ resource "aws_route_table" "rt" {
   }
 }
 
-resource "aws_route_table_association" "rta" {
+resource "aws_route_table_association" "rta1" {
   route_table_id = aws_route_table.rt.id
   subnet_id      = aws_subnet.subnet01.id
+}
+
+resource "aws_route_table_association" "rta2" {
+  route_table_id = aws_route_table.rt.id
+  subnet_id      = aws_subnet.subnet02.id
 }
 ###############################################
