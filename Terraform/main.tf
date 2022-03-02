@@ -6,10 +6,11 @@ terraform {
     }
   }
 }
+
 ################## PROVIDERS ##################
 provider "aws" {
-  region = "eu-west-2"
-  # credentials were passed as env vars before terraform init had occurred
+  region = var.region
+  # credentials passed as env vars before terraform init had occurred
 }
 ###############################################
 
@@ -24,7 +25,7 @@ resource "aws_vpc" "vpc01" {
 }
 
 resource "aws_subnet" "subnet01" {
-  availability_zone = "eu-west-2a"
+  availability_zone = var.az_01
   cidr_block = var.subnet01_cidr
   vpc_id     = aws_vpc.vpc01.id
 
@@ -34,7 +35,7 @@ resource "aws_subnet" "subnet01" {
 }
 
 resource "aws_subnet" "subnet02" {
-  availability_zone = "eu-west-2b"
+  availability_zone = var.az_02
   cidr_block = var.subnet02_cidr
   vpc_id     = aws_vpc.vpc01.id
 
@@ -92,8 +93,8 @@ resource "aws_security_group" "sg01" {
 
 # ##################### EC2 ######################
 resource "aws_instance" "node01" {
-  ami                         = "ami-0015a39e4b7c0966f"
-  instance_type               = "t2.micro"
+  ami                         = var.ami
+  instance_type               = var.instance_type
   key_name                    = var.key_pair
   subnet_id                   = aws_subnet.subnet01.id
   vpc_security_group_ids      = [aws_security_group.sg01.id]
@@ -106,8 +107,8 @@ resource "aws_instance" "node01" {
 }
 
 resource "aws_instance" "node02" {
-  ami                         = "ami-0015a39e4b7c0966f"
-  instance_type               = "t2.micro"
+  ami                         = var.ami
+  instance_type               = var.instance_type
   key_name                    = var.key_pair
   subnet_id                   = aws_subnet.subnet02.id
   vpc_security_group_ids      = [aws_security_group.sg01.id]
@@ -182,15 +183,36 @@ resource "aws_lb" "lb01" {
   enable_deletion_protection = false
 }
 
-resource "aws_lb_listener" "alb_listener" {
+resource "aws_acm_certificate" "cert" {
+  private_key      = file("key.pem")
+  certificate_body = file("cert.pem")
+}
+
+resource "aws_lb_listener" "alb_https_listener" {
   load_balancer_arn = aws_lb.lb01.arn
-  port              = "80"
-  protocol          = "HTTP"
-  #ssl_policy        = "ELBSecurityPolicy-2016-08"
-  #certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = var.ssl_policy
+  certificate_arn   = aws_acm_certificate.cert.arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tg01.arn
+  }
+}
+
+resource "aws_lb_listener" "alb_http_listener" {
+  load_balancer_arn = aws_lb.lb01.arn
+  port              = "80"
+  protocol          = "HTTP"
+  
+  default_action {
+    type             = "redirect"
+
+    redirect {
+      port = "443"
+      protocol = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 }
