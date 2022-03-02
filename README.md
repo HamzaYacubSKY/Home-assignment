@@ -6,13 +6,12 @@
 - Ansible
 
 If using mac, these can be installed with:
-`brew install terraform`
-`brew install ansible`
+`brew install terraform` and `brew install ansible`
 
 Or if using a different OS, these can installed by following these links:
 
-- [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli).
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+- [Terraform installation guide](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+- [Ansible installation guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 ## How to install and run
 
