@@ -8,6 +8,6 @@
 - While still inside of the Terraform directory, run `terraform init`.
 - Run `terraform apply`.
 - From the output of `terraform apply`, copy and paste `ansible_worker_1_public_ip` and `ansible_worker_2_public_ip` into inventory.cfg
-- Run `ansible ansible_worker_1 -m ping -i inventory.cfg` and `ansible ansible_worker_2 -m ping -i inventory.cfg` to make sure the ip addresses of the workers can be reached
+- Run `ansible ansible_worker_1 -m ping -i inventory.cfg` and `ansible ansible_worker_2 -m ping -i inventory.cfg` to make sure the ip addresses of the worker nodes can be reached
 - Run `ansible-playbook playbook.yml -i inventory.cfg`
 - Go back to the output of `terraform apply`, copy and paste `load_balancer_dns` into your browser url
