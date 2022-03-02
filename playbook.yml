@@ -1,17 +1,17 @@
 - name: install python pip modules on worker nodes
-  hosts: servers
+  hosts: workers
   become: true
   roles:
   - install_python-pip
 
 - name: install docker on worker nodes
-  hosts: servers
+  hosts: workers
   become: true
   roles:
   - install_docker
 
 - name: run nginx on worker nodes
-  hosts: servers
+  hosts: workers
   become: true
   roles:
   - run_nginx
